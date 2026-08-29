@@ -6,6 +6,12 @@
 
 Predicting **Flood**, **Drought**, and **Hurricane** risks from meteorological and environmental data.
 
+**Live demo (GitHub Pages):** https://hadbiaghiles.github.io/climate-risk/
+
+> On Pages the UI runs a client-side demo predictor (Flask + TensorFlow stay for local `python app.py`).
+
+
+
 </p>
 
 <p align="center">
@@ -68,8 +74,8 @@ The trained model is already included in the repository, allowing predictions **
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-cd YOUR_REPOSITORY
+git clone https://github.com/hadbiaghiles/climate-risk.git
+cd climate-risk
 ```
 
 ## 2. Install Dependencies

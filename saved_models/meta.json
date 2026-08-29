@@ -1,0 +1,1 @@
+{"thresholds": [0.6, 0.2, 0.6], "features": ["temperature_max", "cumul_pluie_24h", "humidite_relative_air", "vent_soutenu", "pression_atmospherique", "anomalie_niveau_mer", "jours_sans_pluie", "humidite_des_sols", "wind_log", "press_def", "is_extreme_wind", "sol_sature"]}
