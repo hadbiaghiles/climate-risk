@@ -16,6 +16,19 @@ Chart.defaults.font.family = "'Inter', sans-serif";
 // =============================================
 // INITIALIZATION
 // =============================================
+
+async function fetchFirst(urls) {
+    for (const url of urls) {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (data && !data.error) return data;
+        } catch (_) {}
+    }
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     checkModelStatus();
     loadModelMetrics();
@@ -242,10 +255,13 @@ async function predict(event) {
  */
 async function loadModelMetrics() {
     try {
-        const res = await fetch(`${API_BASE}/api/model-info`);
-        const data = await res.json();
+        const data = await fetchFirst([
+            `${API_BASE}/api/model-info`,
+            'data/evaluation.json',
+            'static/data/evaluation.json'
+        ]);
 
-        if (data.accuracy) {
+        if (data && data.accuracy) {
             const accEl = document.getElementById('metricAccuracy');
             const lossEl = document.getElementById('metricLoss');
             const timeEl = document.getElementById('metricTimestamp');
@@ -403,10 +419,13 @@ function animateBar(type, value) {
 
 async function loadPerformanceData() {
     try {
-        const res = await fetch(`${API_BASE}/api/performance-details`);
-        const data = await res.json();
+        const data = await fetchFirst([
+            `${API_BASE}/api/performance-details`,
+            'data/evaluation.json',
+            'static/data/evaluation.json'
+        ]);
         
-        if (!data.available && (!data.confusion_matrix || data.confusion_matrix.length === 0)) {
+        if (!data || (!data.confusion_matrix || data.confusion_matrix.length === 0)) {
             console.warn("Analytics data not available yet.");
 
             // Display placeholder notices for the charts
@@ -447,7 +466,8 @@ function renderHeatmap(matrix, classes) {
                 data: matrix,
                 backgroundColor(context) {
                     const value = context.dataset.data[context.dataIndex].v;
-                    const alpha = Math.min(value / 100, 1) + 0.1;
+                    const maxV = Math.max(...context.dataset.data.map(d => d.v), 1);
+                    const alpha = 0.15 + 0.85 * (value / maxV);
                     return `rgba(59, 130, 246, ${alpha})`;
                 },
                 borderWidth: 1,
@@ -573,11 +593,14 @@ let chartHumiditySea = null;
  */
 async function loadHistoryData() {
     try {
-        const res = await fetch(`${API_BASE}/api/history`);
-        const data = await res.json();
-
-        if (data.error) {
-            console.error('History error:', data.error);
+        const data = await fetchFirst([
+            `${API_BASE}/api/history`,
+            'data/history.json',
+            'static/data/history.json'
+        ]);
+        if (!data) {
+            const infoEl = document.getElementById('historyInfo');
+            if (infoEl) infoEl.textContent = 'Données historiques indisponibles';
             return;
         }
 
@@ -597,9 +620,13 @@ async function loadHistoryData() {
         }
 
         // Add info to UI if elements exist
-        if (data.info) {
-            const infoEl = document.getElementById('historyInfo');
-            if (infoEl) infoEl.textContent = `Période: ${data.info.start_date} à ${data.info.end_date} (1 an simulé)`;
+        const infoEl = document.getElementById('historyInfo');
+        if (infoEl) {
+            const start = data.info && data.info.start_date;
+            const end = data.info && data.info.end_date;
+            infoEl.textContent = start && end
+                ? `Période: ${start} à ${end}`
+                : `Échantillon: ${data.dates.length} points`;
         }
 
     } catch (e) {
