@@ -77,7 +77,8 @@ const I18N = {
     roc_title: "ROC curves",
     roc_p: "Sensitivity vs specificity for each risk class.",
     plots_title: "Training plots",
-    period: "Period"
+    period: "Period",
+    demo_loaded: "Demo model loaded (GitHub Pages)."
   },
   fr: {
     subtitle: "Prédiction de risques climatiques par Deep Learning",
@@ -127,7 +128,8 @@ const I18N = {
     roc_title: "Courbes ROC",
     roc_p: "Sensibilité vs spécificité pour chaque classe de risque.",
     plots_title: "Graphiques d'entraînement",
-    period: "Période"
+    period: "Période",
+    demo_loaded: "Démo chargée (GitHub Pages)."
   }
 };
 
@@ -167,11 +169,31 @@ async function fetchFirst(urls) {
         try {
             const res = await fetch(url);
             if (!res.ok) continue;
-            const data = await res.json();
+            const text = await res.text();
+            if (!text || text.trim().startsWith('<')) continue;
+            const data = JSON.parse(text);
             if (data && !data.error) return data;
         } catch (_) {}
     }
     return null;
+}
+
+function isPagesDemo() {
+    return location.hostname.endsWith('github.io') || location.protocol === 'file:';
+}
+
+function markDemoReady() {
+    const badge = document.getElementById('modelStatus');
+    if (badge) {
+        const dot = badge.querySelector('.status-dot');
+        const text = badge.querySelector('.status-text');
+        if (dot) { dot.classList.remove('not-ready'); dot.classList.add('ready'); }
+        if (text) text.textContent = t('status_demo');
+    }
+    const btn = document.getElementById('btnPredict');
+    if (btn) btn.disabled = false;
+    const details = document.getElementById('btnDetails');
+    if (details) details.style.display = 'inline-flex';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -252,8 +274,11 @@ async function fetchApi(url, opts) {
  */
 async function checkModelStatus() {
     try {
-        const res = await fetch(`${API_BASE}/api/status`);
-        const data = await res.json();
+        const data = await fetchFirst([
+            `${API_BASE}/api/status`,
+            PAGE_ROOT + 'api/status'
+        ]);
+        if (!data) throw new Error('no status json');
 
         const badge = document.getElementById('modelStatus');
         const dot = badge.querySelector('.status-dot');
@@ -293,21 +318,30 @@ async function checkModelStatus() {
  */
 async function handleLoadOrTrain() {
     try {
-        const res = await fetch(`${API_BASE}/api/status`);
-        const data = await res.json();
-
-        if (data.model_ready) {
-            // Le modèle existe déjà, on le "charge" (déjà fait par l'API status et checkModelStatus)
-            showToast('', 'Modèle chargé avec succès depuis le disque.');
-            document.getElementById('btnDetails').style.display = 'inline-flex';
-            checkModelStatus();
-        } else {
-            // Le modèle n'existe pas, on lance l'entraînement
-            showToast('', 'Modèle non trouvé. Lancement de l\'entraînement automatique...');
-            trainModel();
+        if (isPagesDemo()) {
+            markDemoReady();
+            showToast('', t('demo_loaded'));
+            return;
         }
+        const data = await fetchFirst([
+            `${API_BASE}/api/status`,
+            PAGE_ROOT + 'api/status'
+        ]);
+        if (data && data.model_ready) {
+            showToast('', t('demo_loaded'));
+            markDemoReady();
+            checkModelStatus();
+            return;
+        }
+        if (data) {
+            trainModel();
+            return;
+        }
+        markDemoReady();
+        showToast('', t('demo_loaded'));
     } catch (e) {
-        showToast('', `Erreur de statut: ${e.message}`);
+        markDemoReady();
+        showToast('', t('demo_loaded'));
     }
 }
 
