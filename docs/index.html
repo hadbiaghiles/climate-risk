@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,21 +19,26 @@
                 <span class="logo-icon">🌍</span>
                 <div>
                     <h1>Climate Risk AI</h1>
-                    <p class="subtitle">Prédiction de Risques Climatiques par Deep Learning</p>
+                    <p class="subtitle" data-i18n="subtitle">Deep Learning climate risk prediction</p>
                 </div>
             </div>
             <div class="header-actions">
-                <a href="details.html" class="btn btn-details" id="btnDetails" style="display: none;">
+                <div class="lang-switch" role="group" aria-label="Language">
+                    <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+                    <button type="button" class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+                </div>
+
+                <a href="details.html" class="btn btn-details" id="btnDetails">
                     <span class="btn-icon">📊</span>
-                    Performance Analytics
+                    <span data-i18n="analytics">Performance Analytics</span>
                 </a>
                 <div class="status-badge" id="modelStatus">
                     <span class="status-dot"></span>
-                    <span class="status-text">Vérification...</span>
+                    <span class="status-text" data-i18n="status_checking">Checking...</span>
                 </div>
                 <button class="btn btn-train" id="btnTrain" onclick="handleLoadOrTrain()">
                     <span class="btn-icon">📥</span>
-                    Charger le Modèle
+                    <span data-i18n="load_model">Load model</span>
                 </button>
             </div>
         </div>
@@ -44,9 +49,9 @@
         <div class="training-overlay" id="trainingOverlay">
             <div class="training-card">
                 <div class="training-spinner"></div>
-                <h2> Entraînement en cours...</h2>
-                <p>Le modèle Dense MLP apprend à prédire les risques climatiques en tenant compte du déséquilibre des classes (SMOTE).</p>
-                <p class="training-sub">Cela peut prendre quelques minutes.</p>
+                <h2 data-i18n="training_title">Training in progress...</h2>
+                <p data-i18n="training_p">The Dense MLP is learning to predict climate risks.</p>
+                <p class="training-sub" data-i18n="training_sub">This may take a few minutes.</p>
             </div>
         </div>
 
@@ -54,13 +59,13 @@
         <section class="risk-cards-section" id="riskCardsSection">
             <h2 class="section-title">
                 <span class="section-icon">⚡</span>
-                Niveaux de Risque Actuels
+                <span data-i18n="current_risks">Current Risk Levels</span>
             </h2>
             <div class="risk-cards">
                 <div class="risk-card risk-card-flood" id="cardFlood">
                     <div class="risk-card-header">
                         <span class="risk-icon">🌊</span>
-                        <h3>Inondation</h3>
+                        <h3 data-i18n="flood">Flood</h3>
                     </div>
                     <div class="risk-gauge">
                         <div class="gauge-circle" id="gaugeFlood">
@@ -76,7 +81,7 @@
                 <div class="risk-card risk-card-drought" id="cardDrought">
                     <div class="risk-card-header">
                         <span class="risk-icon">☀️</span>
-                        <h3>Sécheresse</h3>
+                        <h3 data-i18n="drought">Drought</h3>
                     </div>
                     <div class="risk-gauge">
                         <div class="gauge-circle" id="gaugeDrought">
@@ -92,7 +97,7 @@
                 <div class="risk-card risk-card-hurricane" id="cardHurricane">
                     <div class="risk-card-header">
                         <span class="risk-icon">🌀</span>
-                        <h3>Ouragan</h3>
+                        <h3 data-i18n="hurricane">Hurricane</h3>
                     </div>
                     <div class="risk-gauge">
                         <div class="gauge-circle" id="gaugeHurricane">
@@ -114,61 +119,61 @@
                 <div class="input-panel glass-panel">
                     <h2 class="section-title">
                         <span class="section-icon">📡</span>
-                        Paramètres Climatiques
+                        <span data-i18n="climate_params">Climate Parameters</span>
                     </h2>
                     <form id="predictionForm" onsubmit="predict(event)">
                         <div class="input-grid">
                             <div class="input-group">
-                                <label for="temperature_max">🌡️ Température max (°C)</label>
+                                <label for="temperature_max">🌡️ <span data-i18n="lbl_temp">Max temperature (°C)</span></label>
                                 <input type="number" id="temperature_max" value="25" step="0.1" min="-20" max="55">
                                 <div class="input-range">
                                     <input type="range" min="-20" max="55" value="25" step="0.1">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="cumul_pluie_24h">🌧️ Pluie 24h (mm)</label>
+                                <label for="cumul_pluie_24h">🌧️ <span data-i18n="lbl_rain">24h rainfall (mm)</span></label>
                                 <input type="number" id="cumul_pluie_24h" value="10" step="0.1" min="0" max="500">
                                 <div class="input-range">
                                     <input type="range" min="0" max="500" value="10" step="0.1">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="humidite_relative_air">💧 Humidité air (%)</label>
+                                <label for="humidite_relative_air">💧 <span data-i18n="lbl_hum">Air humidity (%)</span></label>
                                 <input type="number" id="humidite_relative_air" value="60" step="0.1" min="0" max="100">
                                 <div class="input-range">
                                     <input type="range" min="0" max="100" value="60" step="0.1">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="vent_soutenu">💨 Vent soutenu (km/h)</label>
+                                <label for="vent_soutenu">💨 <span data-i18n="lbl_wind">Sustained wind (km/h)</span></label>
                                 <input type="number" id="vent_soutenu" value="15" step="0.1" min="0" max="300">
                                 <div class="input-range">
                                     <input type="range" min="0" max="300" value="15" step="0.1">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="pression_atmospherique">🌀 Pression (hPa)</label>
+                                <label for="pression_atmospherique">🌀 <span data-i18n="lbl_pressure">Pressure (hPa)</span></label>
                                 <input type="number" id="pression_atmospherique" value="1013" step="0.1" min="900" max="1080">
                                 <div class="input-range">
                                     <input type="range" min="900" max="1080" value="1013" step="0.1">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="anomalie_niveau_mer">🌊 Anomalie mer (m)</label>
+                                <label for="anomalie_niveau_mer">🌊 <span data-i18n="lbl_sea">Sea-level anomaly (m)</span></label>
                                 <input type="number" id="anomalie_niveau_mer" value="0" step="0.01" min="-5" max="10">
                                 <div class="input-range">
                                     <input type="range" min="-5" max="10" value="0" step="0.01">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="jours_sans_pluie">☀️ Jours sans pluie</label>
+                                <label for="jours_sans_pluie">☀️ <span data-i18n="lbl_dry">Days without rain</span></label>
                                 <input type="number" id="jours_sans_pluie" value="0" step="1" min="0" max="150">
                                 <div class="input-range">
                                     <input type="range" min="0" max="150" value="0" step="1">
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="humidite_des_sols">🌱 Humidité sols (%)</label>
+                                <label for="humidite_des_sols">🌱 <span data-i18n="lbl_soil">Soil moisture (%)</span></label>
                                 <input type="number" id="humidite_des_sols" value="40" step="0.1" min="0" max="100">
                                 <div class="input-range">
                                     <input type="range" min="0" max="100" value="40" step="0.1">
@@ -177,7 +182,7 @@
                         </div>
                         <button type="submit" class="btn btn-predict" id="btnPredict">
                             <span class="btn-icon">🔮</span>
-                            Analyser les Risques
+                            <span data-i18n="analyze">Analyze risks</span>
                         </button>
                     </form>
                 </div>
@@ -187,7 +192,7 @@
                     <div id="resultsHeader" class="results-header-flex">
                         <h2 class="section-title">
                             <span class="section-icon"></span>
-                            Analyse SOTA
+                            <span data-i18n="sota">SOTA analysis</span>
                         </h2>
                         <div id="confidenceBadge" class="confidence-badge" style="display: none;">
                             <span class="conf-label">Confidence Score</span>
@@ -285,24 +290,24 @@
         <section class="charts-section" id="chartsSection">
                 <h2 class="section-title">
                     <span class="section-icon">📈</span>
-                    Tendances Historiques
-                    <span id="historyInfo" style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted); margin-left: 12px;">Période: Chargement...</span>
+                    <span data-i18n="hist">Historical Trends</span>
+                    <span id="historyInfo" style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted); margin-left: 12px;">Period: loading...</span>
                 </h2>
             <div class="charts-grid">
                 <div class="chart-card glass-panel">
-                    <h3>🌡️ Température & Précipitations</h3>
+                    <h3>🌡️ <span data-i18n="chart_temp">Temperature & Precipitation</span></h3>
                     <canvas id="chartTempPrecip"></canvas>
                 </div>
                 <div class="chart-card glass-panel">
-                    <h3>⚡ Historique des Risques</h3>
+                    <h3>⚡ <span data-i18n="chart_risks">Risk history</span></h3>
                     <canvas id="chartRisks"></canvas>
                 </div>
                 <div class="chart-card glass-panel">
-                    <h3>💨 Vent & Pression</h3>
+                    <h3>💨 <span data-i18n="chart_wind">Wind & Pressure</span></h3>
                     <canvas id="chartWindPressure"></canvas>
                 </div>
                 <div class="chart-card glass-panel">
-                    <h3>💧 Humidité & Niveau de Mer</h3>
+                    <h3>💧 <span data-i18n="chart_hum">Humidity & Sea level</span></h3>
                     <canvas id="chartHumiditySea"></canvas>
                 </div>
             </div>
@@ -312,8 +317,8 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p>🌍 Climate Risk AI — Prédiction de Risques Climatiques par Deep Learning (SOTA MLP)</p>
-        <p class="footer-sub">Données synthétiques à des fins de démonstration</p>
+        <p data-i18n="footer">🌍 Climate Risk AI — Deep Learning climate risk prediction (SOTA MLP)</p>
+        <p class="footer-sub" data-i18n="footer_sub">Synthetic data for demonstration only</p>
     </footer>
 
     <!-- Toast Notification -->

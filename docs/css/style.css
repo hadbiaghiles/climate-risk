@@ -678,7 +678,9 @@ body::after {
 
 .chart-card canvas {
     width: 100% !important;
-    max-height: 260px;
+    height: 280px !important;
+    max-height: none;
+    display: block;
 }
 
 /* ---- MODEL ARCHITECTURE ---- */
@@ -1040,3 +1042,55 @@ body::after {
 .indicator-level.HIGH { color: var(--risk-high); }
 .indicator-level.MEDIUM { color: var(--risk-moderate); }
 .indicator-level.LOW { color: var(--risk-low); }
+
+
+/* Language switch */
+.lang-switch {
+    display: inline-flex;
+    border: 1px solid var(--border-glass);
+    border-radius: 999px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.lang-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 0;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    font-family: inherit;
+}
+.lang-btn.active {
+    background: var(--accent-blue);
+    color: #fff;
+}
+
+.chart-card {
+    min-height: 360px;
+    height: 360px;
+    display: flex;
+    flex-direction: column;
+}
+.chart-card canvas {
+    flex: 1;
+    width: 100% !important;
+    height: 280px !important;
+    max-height: none;
+    display: block;
+}
+.plot-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 16px;
+}
+.plot-grid img {
+    width: 100%;
+    border-radius: 12px;
+    background: #0b1220;
+    border: 1px solid var(--border-glass);
+}
+.header-actions { flex-wrap: wrap; }

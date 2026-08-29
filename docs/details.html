@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -162,13 +162,20 @@
 </head>
 <body>
     <div class="details-container">
-        <a href="index.html" class="back-link">
-            <span>⬅️</span> Retour au Tableau de Bord
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <a href="index.html" class="back-link" style="margin-bottom:0;">
+            <span>⬅️</span> <span data-i18n="back">Back to dashboard</span>
         </a>
+        <div class="lang-switch" role="group" aria-label="Language">
+            <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+            <button type="button" class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+        </div>
+        </div>
+
 
         <header style="margin-bottom: 48px;">
-            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Performance Analytics Dashboard</h1>
-            <p style="color: var(--text-secondary); font-size: 1.1rem;">Visualisations SOTA de la stabilité prédictive du modèle Dense MLP calibré par SMOTE.</p>
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><span data-i18n="details_title">Performance Analytics Dashboard</span></h1>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;"><span data-i18n="details_sub">Validation metrics, ROC curves, confusion matrix, and feature importance.</span></p>
         </header>
 
         <!-- Global Metrics -->
@@ -234,6 +241,19 @@
         <!-- Scripts for Interactive Analytics -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
+
+        
+        <section class="charts-dashboard" id="plotFallback">
+            <h2 class="section-title">
+                <span class="section-icon">🖼️</span>
+                <span data-i18n="plots_title">Training plots</span>
+            </h2>
+            <div class="plot-grid">
+                <img id="plotTrain" src="plots/training_curves.png" alt="Training curves">
+                <img id="plotRoc" src="plots/roc_curves.png" alt="ROC curves">
+                <img id="plotCm" src="plots/confusion_matrices.png" alt="Confusion matrices">
+            </div>
+        </section>
 
         <section class="architecture-section">
             <h2 class="section-title">
