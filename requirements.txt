@@ -1,0 +1,23 @@
+# Climate Risk Prediction - Requirements
+# ======================================
+# 
+# INSTALLATION:
+#   pip install -r requirements.txt
+#
+# UTILISATION (modèle déjà entraîné):
+#
+#   python app.py
+#   Puis ouvrir : http://127.0.0.1:5000
+#
+#
+# ======================================
+
+flask>=2.3.0
+flask-cors>=4.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+joblib>=1.3.0
+tensorflow>=2.13.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+seaborn>=0.12.0

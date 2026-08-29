@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Performance Analytics — Climate Risk AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .details-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 32px;
+            transition: var(--transition);
+        }
+        .back-link:hover {
+            transform: translateX(-5px);
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .var-full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .chart-box h3 {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .chart-box p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .img-fluid {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-glass);
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        .img-fluid:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Re-use from old layout for arch-viz */
+        .arch-viz {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            padding: 40px;
+            background: var(--bg-glass);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-glass);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        .arch-step {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+        .arch-step:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-blue);
+            transform: scale(1.02);
+        }
+        .step-num {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+        .step-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            color: var(--accent-cyan);
+        }
+        .step-info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .arch-connector {
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-cyan));
+        }
+        
+        .tech-spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .spec-item {
+            padding: 20px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+        .spec-item:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-5px);
+        }
+        .spec-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .spec-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <a href="index.html" class="back-link">
+            <span>⬅️</span> Retour au Tableau de Bord
+        </a>
+
+        <header style="margin-bottom: 48px;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Performance Analytics Dashboard</h1>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">Visualisations SOTA de la stabilité prédictive du modèle Dense MLP calibré par SMOTE.</p>
+        </header>
+
+        <!-- Global Metrics -->
+        <section class="metrics-section">
+            <h2 class="section-title">
+                <span class="section-icon">📈</span>
+                Métriques de Validation Globales
+            </h2>
+            <div class="metrics-summary" style="margin-bottom: 40px;">
+                <div class="metric-box glass-panel">
+                    <span class="metric-label">Accuracy Globale</span>
+                    <span class="metric-value" id="metricAccuracy" style="font-size: 2.5rem; color: var(--risk-low);">--</span>
+                </div>
+                <div class="metric-box glass-panel">
+                    <span class="metric-label">Loss (Perte) Finale</span>
+                    <span class="metric-value" id="metricLoss">--</span>
+                </div>
+                <div class="metric-box glass-panel">
+                    <span class="metric-label">Évaluation SOTA</span>
+                    <span class="metric-value" id="metricTimestamp" style="font-size: 0.9rem; color: var(--text-muted);">--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Visualization Dashboard -->
+        <section class="charts-dashboard">
+            <h2 class="section-title">
+                <span class="section-icon">👁️‍🗨️</span>
+                Explicabilité & Visualisations Intelligentes
+            </h2>
+            <div class="dashboard-grid">
+                
+                <!-- Feature Importance (Interactive) -->
+                <div class="chart-box glass-panel var-full-width">
+                    <h3>🏆 Importance des Features (Interactif)</h3>
+                    <p>Analyse de la contribution de chaque variable via Permutation Importance.</p>
+                    <div style="height: 400px; width: 100%;">
+                        <canvas id="chartFeatureImportance"></canvas>
+                    </div>
+                </div>
+
+                <!-- Confusion Matrix (Heatmap) -->
+                <div class="chart-box glass-panel">
+                    <h3>🧩 Matrice de Confusion (Heatmap)</h3>
+                    <p>Analyse des erreurs de classification inter-classes.</p>
+                    <div style="height: 400px; width: 100%;">
+                        <canvas id="chartConfusionMatrix"></canvas>
+                    </div>
+                </div>
+
+                <!-- ROC / AUC (Interactive) -->
+                <div class="chart-box glass-panel">
+                    <h3>📈 Courbes ROC (Performance)</h3>
+                    <p>Sensibilité vs Spécificité pour chaque classe de risque.</p>
+                    <div style="height: 400px; width: 100%;">
+                        <canvas id="chartROC"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Scripts for Interactive Analytics -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
+
+        <section class="architecture-section">
+            <h2 class="section-title">
+                <span class="section-icon">🧠</span>
+                Architecture du Pipeline Deep Learning
+            </h2>
+            
+            <div class="arch-viz">
+        <div class="arch-step">
+            <div class="step-num">1</div>
+            <div class="step-info">
+                <h3>Input Layer - 12 Features</h3>
+                <p>8 paramètres climatiques d'entrée (température, pluie, humidité, vent, pression, niveau mer, jours sans pluie, humidité sols) + 4 features ingénieurées (wind_log, press_def, is_extreme_wind, sol_sature).</p>
+            </div>
+        </div>
+                
+                <div class="arch-connector"></div>
+
+        <div class="arch-step">
+            <div class="step-num">2</div>
+            <div class="step-info">
+                <h3>K-Fold Cross Validation (5 Folds)</h3>
+                <p>Validation croisée sur 25 000 échantillons synthétiques avec Early Stopping (patience=15) pour éviter le surapprentissage. Accuracy moyenne: 98.00%.</p>
+            </div>
+        </div>
+                
+                <div class="arch-connector"></div>
+
+        <div class="arch-step">
+            <div class="step-num">3</div>
+            <div class="step-info">
+                <h3>Deep Neural Network Architecture</h3>
+                <p>Dense MLP: <code>256 → 128 → 64</code> avec BatchNorm et Dropout (0.4, 0.3, 0.2). Activation Swish. 3 sorties Sigmoid (Inondation, Sécheresse, Ouragan).</p>
+            </div>
+        </div>
+            </div>
+        </section>
+
+        <section class="tech-spec-section">
+            <h2 class="section-title">
+                <span class="section-icon">⚙️</span>
+                Hyperparamètres & Configuration Actuelle
+            </h2>
+            <div class="tech-spec-grid">
+                <div class="spec-item">
+                    <span class="spec-label">Architecture</span>
+                    <span class="spec-value">Dense 256→128→64</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Features</span>
+                    <span class="spec-value">12 (8+4)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Dataset</span>
+                    <span class="spec-value">25 000 samples</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Validation</span>
+                    <span class="spec-value">K-Fold 5 folds</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Epochs</span>
+                    <span class="spec-value">150 max</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Batch Size</span>
+                    <span class="spec-value">64</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Optimiseur</span>
+                    <span class="spec-value">Adam (LR: 1e-3)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Régularisation</span>
+                    <span class="spec-value">Dropout 0.4/0.3/0.2</span>
+                </div>
+            </div>
+        </section>
+
+        <footer style="margin-top: 80px; text-align: center; border-top: 1px solid var(--border-glass); padding-top: 20px; color: var(--text-muted); margin-bottom: 40px;">
+            <p> 2026 Climate Risk AI — Tableau de bord certifié Analytics</p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

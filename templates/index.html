@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Climate Risk AI - Prédiction de Risques Climatiques</title>
+    <meta name="description" content="Application de prédiction de risques climatiques utilisant le Deep Learning (Dense MLP) - Inondations, Sécheresses, Ouragans">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🌍</span>
+                <div>
+                    <h1>Climate Risk AI</h1>
+                    <p class="subtitle">Prédiction de Risques Climatiques par Deep Learning</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/details" class="btn btn-details" id="btnDetails" style="display: none;">
+                    <span class="btn-icon">📊</span>
+                    Performance Analytics
+                </a>
+                <div class="status-badge" id="modelStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Vérification...</span>
+                </div>
+                <button class="btn btn-train" id="btnTrain" onclick="handleLoadOrTrain()">
+                    <span class="btn-icon">📥</span>
+                    Charger le Modèle
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- TRAINING OVERLAY -->
+        <div class="training-overlay" id="trainingOverlay">
+            <div class="training-card">
+                <div class="training-spinner"></div>
+                <h2> Entraînement en cours...</h2>
+                <p>Le modèle Dense MLP apprend à prédire les risques climatiques en tenant compte du déséquilibre des classes (SMOTE).</p>
+                <p class="training-sub">Cela peut prendre quelques minutes.</p>
+            </div>
+        </div>
+
+        <!-- RISK CARDS -->
+        <section class="risk-cards-section" id="riskCardsSection">
+            <h2 class="section-title">
+                <span class="section-icon">⚡</span>
+                Niveaux de Risque Actuels
+            </h2>
+            <div class="risk-cards">
+                <div class="risk-card risk-card-flood" id="cardFlood">
+                    <div class="risk-card-header">
+                        <span class="risk-icon">🌊</span>
+                        <h3>Inondation</h3>
+                    </div>
+                    <div class="risk-gauge">
+                        <div class="gauge-circle" id="gaugeFlood">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+                                <circle class="gauge-fill" cx="60" cy="60" r="52" id="gaugeFillFlood"/>
+                            </svg>
+                            <span class="gauge-value" id="valueFlood">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="risk-card risk-card-drought" id="cardDrought">
+                    <div class="risk-card-header">
+                        <span class="risk-icon">☀️</span>
+                        <h3>Sécheresse</h3>
+                    </div>
+                    <div class="risk-gauge">
+                        <div class="gauge-circle" id="gaugeDrought">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+                                <circle class="gauge-fill" cx="60" cy="60" r="52" id="gaugeFillDrought"/>
+                            </svg>
+                            <span class="gauge-value" id="valueDrought">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="risk-card risk-card-hurricane" id="cardHurricane">
+                    <div class="risk-card-header">
+                        <span class="risk-icon">🌀</span>
+                        <h3>Ouragan</h3>
+                    </div>
+                    <div class="risk-gauge">
+                        <div class="gauge-circle" id="gaugeHurricane">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+                                <circle class="gauge-fill" cx="60" cy="60" r="52" id="gaugeFillHurricane"/>
+                            </svg>
+                            <span class="gauge-value" id="valueHurricane">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INPUT FORM + PREDICTION -->
+        <section class="prediction-section" id="predictionSection">
+            <div class="prediction-grid">
+                <!-- Formulaire d'entrée -->
+                <div class="input-panel glass-panel">
+                    <h2 class="section-title">
+                        <span class="section-icon">📡</span>
+                        Paramètres Climatiques
+                    </h2>
+                    <form id="predictionForm" onsubmit="predict(event)">
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="temperature_max">🌡️ Température max (°C)</label>
+                                <input type="number" id="temperature_max" value="25" step="0.1" min="-20" max="55">
+                                <div class="input-range">
+                                    <input type="range" min="-20" max="55" value="25" step="0.1">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="cumul_pluie_24h">🌧️ Pluie 24h (mm)</label>
+                                <input type="number" id="cumul_pluie_24h" value="10" step="0.1" min="0" max="500">
+                                <div class="input-range">
+                                    <input type="range" min="0" max="500" value="10" step="0.1">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="humidite_relative_air">💧 Humidité air (%)</label>
+                                <input type="number" id="humidite_relative_air" value="60" step="0.1" min="0" max="100">
+                                <div class="input-range">
+                                    <input type="range" min="0" max="100" value="60" step="0.1">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="vent_soutenu">💨 Vent soutenu (km/h)</label>
+                                <input type="number" id="vent_soutenu" value="15" step="0.1" min="0" max="300">
+                                <div class="input-range">
+                                    <input type="range" min="0" max="300" value="15" step="0.1">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="pression_atmospherique">🌀 Pression (hPa)</label>
+                                <input type="number" id="pression_atmospherique" value="1013" step="0.1" min="900" max="1080">
+                                <div class="input-range">
+                                    <input type="range" min="900" max="1080" value="1013" step="0.1">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="anomalie_niveau_mer">🌊 Anomalie mer (m)</label>
+                                <input type="number" id="anomalie_niveau_mer" value="0" step="0.01" min="-5" max="10">
+                                <div class="input-range">
+                                    <input type="range" min="-5" max="10" value="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="jours_sans_pluie">☀️ Jours sans pluie</label>
+                                <input type="number" id="jours_sans_pluie" value="0" step="1" min="0" max="150">
+                                <div class="input-range">
+                                    <input type="range" min="0" max="150" value="0" step="1">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="humidite_des_sols">🌱 Humidité sols (%)</label>
+                                <input type="number" id="humidite_des_sols" value="40" step="0.1" min="0" max="100">
+                                <div class="input-range">
+                                    <input type="range" min="0" max="100" value="40" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-predict" id="btnPredict">
+                            <span class="btn-icon">🔮</span>
+                            Analyser les Risques
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Résultats détaillés -->
+                <div class="results-panel glass-panel" id="resultsPanel">
+                    <div id="resultsHeader" class="results-header-flex">
+                        <h2 class="section-title">
+                            <span class="section-icon"></span>
+                            Analyse SOTA
+                        </h2>
+                        <div id="confidenceBadge" class="confidence-badge" style="display: none;">
+                            <span class="conf-label">Confidence Score</span>
+                            <span class="conf-value" id="confValue">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="results-placeholder" id="resultsPlaceholder">
+                        <div class="placeholder-icon">🔮</div>
+                        <p>Entrez les paramètres climatiques et cliquez sur <strong>"Analyser les Risques"</strong> pour obtenir les prédictions du modèle Deep Learning.</p>
+                    </div>
+
+                    <div class="results-content" id="resultsContent" style="display: none;">
+                        <!-- Risk Indicators -->
+                        <div class="risk-indicators-grid">
+                            <div class="indicator-item" id="indicatorFlood">
+                                <span class="indicator-hazard">INONDATION</span>
+                                <span class="indicator-level" id="levelLabelFlood">--</span>
+                                <p class="indicator-desc" id="descFlood">--</p>
+                            </div>
+                            <div class="indicator-item" id="indicatorDrought">
+                                <span class="indicator-hazard">SÉCHERESSE</span>
+                                <span class="indicator-level" id="levelLabelDrought">--</span>
+                                <p class="indicator-desc" id="descDrought">--</p>
+                            </div>
+                            <div class="indicator-item" id="indicatorHurricane">
+                                <span class="indicator-hazard">OURAGAN</span>
+                                <span class="indicator-level" id="levelLabelHurricane">--</span>
+                                <p class="indicator-desc" id="descHurricane">--</p>
+                            </div>
+                            <div class="indicator-item" id="indicatorNormal">
+                                <span class="indicator-hazard">TEMPS NORMAL</span>
+                                <span class="indicator-level" id="levelLabelNormal">--</span>
+                                <p class="indicator-desc" id="descNormal">--</p>
+                            </div>
+                        </div>
+
+                        <!-- Raw Probabilities -->
+                        <div class="result-bars" style="margin-top: 30px;">
+                            <div class="result-item">
+                                <div class="result-header">
+                                    <span>Probabilité Inondation</span>
+                                    <span class="result-pct" id="resultFloodPct">0%</span>
+                                </div>
+                                <div class="result-bar">
+                                    <div class="result-bar-fill flood-bar" id="resultFloodBar"></div>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-header">
+                                    <span>Probabilité Sécheresse</span>
+                                    <span class="result-pct" id="resultDroughtPct">0%</span>
+                                </div>
+                                <div class="result-bar">
+                                    <div class="result-bar-fill drought-bar" id="resultDroughtBar"></div>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-header">
+                                    <span>Probabilité Ouragan</span>
+                                    <span class="result-pct" id="resultHurricanePct">0%</span>
+                                </div>
+                                <div class="result-bar">
+                                    <div class="result-bar-fill hurricane-bar" id="resultHurricaneBar"></div>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-header">
+                                    <span>Probabilité Temps Normal</span>
+                                    <span class="result-pct" id="resultNormalPct">0%</span>
+                                </div>
+                                <div class="result-bar">
+                                    <div class="result-bar-fill" style="background: linear-gradient(90deg, #10b981, #34d399);" id="resultNormalBar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Insights Panel -->
+                        <div class="insights-panel" style="margin-top: 30px;">
+                            <div class="insight-row">
+                                <span class="insight-label">🕒 Timestamp :</span>
+                                <span class="insight-value" id="resTimestamp">--</span>
+                            </div>
+                            <div class="insight-row">
+                                <span class="insight-label">📜 Paramètres :</span>
+                                <span class="insight-value" id="resInputs">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARTS -->
+        <section class="charts-section" id="chartsSection">
+                <h2 class="section-title">
+                    <span class="section-icon">📈</span>
+                    Tendances Historiques
+                    <span id="historyInfo" style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted); margin-left: 12px;">Période: Chargement...</span>
+                </h2>
+            <div class="charts-grid">
+                <div class="chart-card glass-panel">
+                    <h3>🌡️ Température & Précipitations</h3>
+                    <canvas id="chartTempPrecip"></canvas>
+                </div>
+                <div class="chart-card glass-panel">
+                    <h3>⚡ Historique des Risques</h3>
+                    <canvas id="chartRisks"></canvas>
+                </div>
+                <div class="chart-card glass-panel">
+                    <h3>💨 Vent & Pression</h3>
+                    <canvas id="chartWindPressure"></canvas>
+                </div>
+                <div class="chart-card glass-panel">
+                    <h3>💧 Humidité & Niveau de Mer</h3>
+                    <canvas id="chartHumiditySea"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🌍 Climate Risk AI — Prédiction de Risques Climatiques par Deep Learning (SOTA MLP)</p>
+        <p class="footer-sub">Données synthétiques à des fins de démonstration</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon"></span>
+        <span class="toast-message" id="toastMessage"></span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
