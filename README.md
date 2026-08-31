@@ -1,4 +1,4 @@
-# 🌍 Climate Risk v5 — Deep Learning Climate Risk Prediction.........
+# 🌍 Climate Risk v5 — Deep Learning Climate Risk Prediction
 
 <p align="center">
 
